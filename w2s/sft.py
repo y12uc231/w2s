@@ -11,7 +11,7 @@ from transformers import (
     TrainingArguments,
 )
 
-import wandb
+#import wandb
 from w2s.loss import (
     log_confidence_loss, 
     confidence_window_loss, 
@@ -280,7 +280,7 @@ def train(
         cfg["loss"] = cfg["loss"].to_dict()
         cfg["probe"] = cfg["probe"].to_dict()
         json.dump(cfg, f, indent=2)
-    wandb.config.update(cfg)
+    #wandb.config.update(cfg)
 
     # save predictions
     if predict_dict is not None:
@@ -293,4 +293,4 @@ def train(
 
             pred_ds.save_to_disk(str(save_dir / "predictions" / name))
 
-    wandb.finish()
+    #wandb.finish()

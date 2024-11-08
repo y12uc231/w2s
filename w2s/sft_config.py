@@ -11,11 +11,11 @@ from w2s.sft_utils import literal
 @dataclass
 class SFTConfig(Serializable):
     # name of the model to train
-    weak_model_name: str = "Qwen/Qwen1.5-0.5B"
+    weak_model_name: str = "gpt2" #"Qwen/Qwen1.5-0.5B"
     strong_model_name: str = "meta-llama/Meta-Llama-3-8B"
     # name of the dataset to use
     dataset: str = "boolq"
-    n_epochs: float = 3
+    n_epochs: float = 2 # 1
     n_train: int = 10_000
     n_val: int = 1_000
     n_test: int = 5_000
@@ -32,13 +32,13 @@ class SFTConfig(Serializable):
     disable_lora: bool = False
     lr_schedule: str = "cosine"
     n_warmup_steps: int = 40  # 2 / (1 - 0.95) = 40
-    eval_every: int = 25  # steps
-    save_every: int = 25  # steps
+    eval_every: int = 100  # steps
+    save_every: int = 100  # steps
     save_total_limit: Optional[int] = 1
     weight_decay: float = 0.1
     weak_lr: float = 5e-4
     strong_lr: float = 8e-5
-    load_best_model_at_end: bool = True
+    load_best_model_at_end: bool = False #True
     metric_for_best_model: str = "val_auroc"
 
     loss: LossConfig = subgroups(LOSS_CONFIGS, default="logconf")
@@ -74,3 +74,4 @@ class SFTConfig(Serializable):
     def to_dict(self):
         irrelevant_fields = ["results_folder", "run_name", "minibatch_size"]
         return {k: v for k, v in vars(self).items() if k not in irrelevant_fields}
+    

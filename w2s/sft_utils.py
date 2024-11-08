@@ -108,20 +108,30 @@ def clear_mem(verbose: bool = False):
             if torch.is_tensor(obj) or torch.is_tensor(try_attr(obj, "data")):
                 print(type(obj), obj.size(), obj.dtype)
 
-
-def get_gpu_mem_used() -> float:
-    """returns proportion of used GPU memory averaged across all GPUs"""
-    prop_sum = 0
-    pynvml.nvmlInit()
+def get_gpu_mem_used():
     try:
-        num_devices = pynvml.nvmlDeviceGetCount()
-        for i in range(num_devices):
-            handle = pynvml.nvmlDeviceGetHandleByIndex(i)
-            meminfo = pynvml.nvmlDeviceGetMemoryInfo(handle)
-            prop_sum += int(meminfo.used) / int(meminfo.total)
-    finally:
-        pynvml.nvmlShutdown()
-    return prop_sum / num_devices
+        import pynvml
+        pynvml.nvmlInit()
+        handle = pynvml.nvmlDeviceGetHandleByIndex(0)
+        info = pynvml.nvmlDeviceGetMemoryInfo(handle)
+        return info.used / info.total
+    except:
+        print("Warning: GPU memory monitoring not available")
+        return 0
+
+#def get_gpu_mem_used() -> float:
+#    """returns proportion of used GPU memory averaged across all GPUs"""
+#    prop_sum = 0
+#    pynvml.nvmlInit()
+#    try:
+#        num_devices = pynvml.nvmlDeviceGetCount()
+#        for i in range(num_devices):
+#            handle = pynvml.nvmlDeviceGetHandleByIndex(i)
+#            meminfo = pynvml.nvmlDeviceGetMemoryInfo(handle)
+#            prop_sum += int(meminfo.used) / int(meminfo.total)
+#    finally:
+#        pynvml.nvmlShutdown()
+#    return prop_sum / num_devices
 
 
 def spotcheck_init(model: torch.nn.Module):
